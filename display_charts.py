@@ -11,7 +11,11 @@ def display_bar_chart(game_id):
         "GET", f"https://www.cheapshark.com/api/1.0/games?id={game_id}"
     ).json()
     store_price = res_dict.get("discountedStorePrice").get("price")
-    st.bar_chart(data= pd.DataFrame({}), *, x="Store", y="Price", color="#ffaa00", width=200, height=500, use_container_width=True)
+    chart_data = pd.DataFrame(
+   {"col1": list(range(20)), "col2": pd.random.randn(20), "col3": pd.random.randn(20)}
+)
+    st.bar_chart(chart_data, x="Store", y="Price", color="#ffaa00", width=200, height=500, use_container_width=True)
+
 
 
 def display_line_chart(game_id):
