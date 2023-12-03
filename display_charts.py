@@ -6,15 +6,36 @@ import streamlit as st
 
 # Feature-API-Call #3 (Name):
 def display_bar_chart(game_id):
-    st.write("Bar Chart")
     res_dict = requests.request(
         "GET", f"https://www.cheapshark.com/api/1.0/games?id={game_id}"
     ).json()
-    store_price = res_dict.get("discountedStorePrice").get("price")
-    chart_data = pd.DataFrame(
-   {"col1": list(range(20)), "col2": pd.random.randn(20), "col3": pd.random.randn(20)}
-)
-    st.bar_chart(chart_data, x="Store", y="Price", color="#ffaa00", width=200, height=500, use_container_width=True)
+    all_time_lowest = res_dict.get("cheapestPriceEver").get("price")
+    store_lowest = [store.get("price") for store in res_dict.get("deals")]
+
+    data = pd.DataFrame(
+        {
+            "Store Lowest Price": store_lowest
+            if len(store_lowest) > 1
+            else store_lowest * 5,
+            "All Time Lowest Price": [all_time_lowest] * len(store_lowest)
+            if len(store_lowest) > 1
+            else [all_time_lowest] * 5,
+        }
+    )
+
+    fig = px.line(
+        data,
+        height=500,
+    )
+    fig.update_layout(
+        title="Discounted Prices",
+        xaxis_title="Store",
+        yaxis_title="Price",
+    )
+    st.subheader("Bar Chart")
+    st.info("If the line is flat, there is only one store.")
+    st.plotly_chart(fig, use_container_width=True)
+
 
 
 
